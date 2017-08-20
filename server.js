@@ -7,37 +7,46 @@ var app=express();
 
 app.get('/scrape',function (req,res) {
 
+    var json={title:"",release:"",rating:""};
+
     console.log("Entered")
 
     url = 'http://www.imdb.com/title/tt1229340/';
 
     request(url,function (error,res,html) {
 
-        console.log(error);
-
         if(!error){
 
-            console.log(html);
 
             var $=cheerio.load(html);
 
             var title,release,rating;
 
-            var json={title:"",release:"",rating:""};
 
-            $('.header').filter(function(){
+           var name= $(".title_wrapper").children().first().text();
+
+           json.title=name;
+
+           var rating=$(".ratingValue").children().first().text();
+           console.log(rating);
+           json.rating=rating;
+
+           var date=$('.subtext meta[itemprop="datePublished"]').attr("content");
+           console.log(date);
+           json.release=date;
+           /* $('h1.title_wrapper').filter(function(){
 
                 var data=$(this);
-                title = data.children().first().text();
-
-                json.title=title;
-                res.send(title);
+                console.log(data);
+                var arrya = data.text();
+                console.log(arrya);
+                json.title=arrya;
                 console.log(title);
             });
-
+*/
         }
-
     });
+
 
 });
 
